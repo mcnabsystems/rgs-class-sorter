@@ -11,6 +11,7 @@ import { parseStudentPreferences, parseTeacherRestrictions, getAllStudents } fro
 import { sortStudents } from '@/utils/sortingAlgorithm';
 import { StudentPreference, TeacherRestriction, PrecedenceMode, SortingResult } from '@/types/student';
 import { Users, Trophy, AlertCircle, XCircle, Shuffle, RotateCcw } from 'lucide-react';
+import rgsLogo from '@/assets/rgs-logo.gif';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -64,11 +65,9 @@ const Index = () => {
       <header className="border-b border-border bg-card">
         <div className="container py-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Shuffle className="w-6 h-6 text-primary" />
-            </div>
+            <img src={rgsLogo} alt="Ripon Grammar School Logo" className="h-12" />
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Class Sorter</h1>
+              <h1 className="text-2xl font-bold text-foreground">RGS Year 9 Class Sorter</h1>
               <p className="text-sm text-muted-foreground">
                 Intelligently sort students into classes based on preferences and restrictions
               </p>
