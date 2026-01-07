@@ -5,7 +5,7 @@ const studentSampleCSV = `Chooser,Chosen
 Alice Johnson,Bob Smith
 Bob Smith,Alice Johnson
 Charlie Brown,Diana Ross
-Diana Ross,Emma Wilson
+Diana Ross,Charlie Brown
 Emma Wilson,Frank Miller
 Frank Miller,Grace Lee
 Grace Lee,Henry Chen
@@ -21,19 +21,33 @@ Peter Jones,Quinn Roberts
 Quinn Roberts,Rachel White
 Rachel White,Samuel Green
 Samuel Green,Tina Black
-Tina Black,Charlie Brown`;
+Tina Black,Uma Patel
+Uma Patel,Victor Chang
+Victor Chang,Uma Patel
+Wendy Liu,Xavier Martinez
+Xavier Martinez,Wendy Liu
+Yolanda Kim,Zach Thompson
+Zach Thompson,Yolanda Kim
+Aaron Mitchell,Bella Cooper
+Bella Cooper,Aaron Mitchell
+Carlos Diaz,Danielle Foster
+Danielle Foster,Ethan Gray
+Ethan Gray,Fiona Hughes
+Fiona Hughes,George Irving
+George Irving,Hannah James
+Hannah James,Ivan Kelly
+Ivan Kelly,Julia Long
+Julia Long,Kevin Moore
+Kevin Moore,Laura Nelson
+Laura Nelson,Marcus Oliver
+Marcus Oliver,Nina Perry`;
 
 const teacherSampleCSV = `Student,Forbidden Partner
 Alice Johnson,Charlie Brown
-Bob Smith,Diana Ross
-Emma Wilson,Frank Miller
-Grace Lee,Jack Taylor
-Henry Chen,Liam Brown
-Isabella Garcia,Noah Wilson
-Katie Adams,Peter Jones
-Mia Davis,Quinn Roberts
-Olivia Martin,Samuel Green
-Rachel White,Tina Black`;
+Emma Wilson,Grace Lee
+Jack Taylor,Liam Brown
+Olivia Martin,Quinn Roberts
+Victor Chang,Xavier Martinez`;
 
 function downloadCSV(content: string, filename: string) {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
