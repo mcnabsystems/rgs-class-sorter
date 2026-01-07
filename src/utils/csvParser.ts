@@ -4,9 +4,10 @@ export function parseStudentPreferences(csvContent: string): StudentPreference[]
   const lines = csvContent.trim().split('\n');
   const preferences: StudentPreference[] = [];
   
-  // Skip header if present
-  const startIndex = lines[0].toLowerCase().includes('student') || 
-                     lines[0].toLowerCase().includes('name') ? 1 : 0;
+  // Skip header row (expects: Chooser,Chosen)
+  const firstLine = lines[0].toLowerCase();
+  const hasHeader = firstLine.includes('chooser') || firstLine.includes('chosen');
+  const startIndex = hasHeader ? 1 : 0;
   
   for (let i = startIndex; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -32,9 +33,10 @@ export function parseTeacherRestrictions(csvContent: string): TeacherRestriction
   const lines = csvContent.trim().split('\n');
   const restrictions: TeacherRestriction[] = [];
   
-  // Skip header if present
-  const startIndex = lines[0].toLowerCase().includes('student') || 
-                     lines[0].toLowerCase().includes('name') ? 1 : 0;
+  // Skip header row (expects: Student,Forbidden Partner)
+  const firstLine = lines[0].toLowerCase();
+  const hasHeader = firstLine.includes('student') || firstLine.includes('forbidden');
+  const startIndex = hasHeader ? 1 : 0;
   
   for (let i = startIndex; i < lines.length; i++) {
     const line = lines[i].trim();
