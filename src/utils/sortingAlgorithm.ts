@@ -150,13 +150,32 @@ function distributeIntoClasses(
   const assigned = new Set<string>();
   const targetSize = Math.ceil(students.length / numClasses);
   
+  // Helper to check if student can be placed in a class
+  const canPlaceInClass = (student: string, cls: ClassGroup): boolean => {
+    if (precedence !== 'teacher') return true;
+    
+    // In teacher precedence mode, strictly enforce restrictions
+    for (const classmate of cls.students) {
+      if (graph[student]?.restricted.includes(classmate) ||
+          graph[classmate]?.restricted.includes(student)) {
+        return false;
+      }
+    }
+    return true;
+  };
+  
   // First, place paired students together
   const processedPairs = new Set<string>();
   pairs.forEach((partner, student) => {
     if (processedPairs.has(student) || processedPairs.has(partner)) return;
     
-    // Find the smallest class that can fit both
-    const availableClass = classes.find(c => c.students.length + 2 <= targetSize + 1);
+    // Find a class that can fit both and respects restrictions
+    const availableClass = classes.find(c => 
+      c.students.length + 2 <= targetSize + 1 &&
+      canPlaceInClass(student, c) &&
+      canPlaceInClass(partner, c)
+    );
+    
     if (availableClass) {
       availableClass.students.push(student, partner);
       assigned.add(student);
@@ -170,12 +189,17 @@ function distributeIntoClasses(
   const remaining = students.filter(s => !assigned.has(s));
   
   for (const student of remaining) {
-    // Find a class where this student has minimal restrictions
-    let bestClass = classes[0];
+    // Find the best class for this student
+    let bestClass: ClassGroup | null = null;
     let minRestrictions = Infinity;
     
     for (const cls of classes) {
       if (cls.students.length >= targetSize + 1) continue;
+      
+      // In teacher precedence mode, only consider classes with no restrictions
+      if (precedence === 'teacher' && !canPlaceInClass(student, cls)) {
+        continue;
+      }
       
       let restrictionCount = 0;
       for (const classmate of cls.students) {
@@ -189,6 +213,11 @@ function distributeIntoClasses(
         minRestrictions = restrictionCount;
         bestClass = cls;
       }
+    }
+    
+    // If no suitable class found (only in edge cases), find any class with space
+    if (!bestClass) {
+      bestClass = classes.find(c => c.students.length < targetSize + 2) || classes[0];
     }
     
     bestClass.students.push(student);
