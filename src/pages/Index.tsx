@@ -5,6 +5,7 @@ import { StudentSelector } from '@/components/StudentSelector';
 import { StatsCard } from '@/components/StatsCard';
 import { ResultsTable } from '@/components/ResultsTable';
 import { ClassesDisplay } from '@/components/ClassesDisplay';
+import { SampleDownloads } from '@/components/SampleDownloads';
 import { parseStudentPreferences, parseTeacherRestrictions, getAllStudents } from '@/utils/csvParser';
 import { sortStudents } from '@/utils/sortingAlgorithm';
 import { StudentPreference, TeacherRestriction, PrecedenceMode, SortingResult } from '@/types/student';
@@ -76,18 +77,21 @@ const Index = () => {
       </header>
 
       <main className="container py-8 space-y-8">
+        {/* Sample Downloads */}
+        <SampleDownloads />
+
         {/* Upload Section */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FileUpload
             label="Student Preferences"
-            description="CSV with student names and their preferred partners"
+            description="CSV with Chooser,Chosen columns"
             onFileLoad={handleStudentPreferencesLoad}
             isLoaded={studentPreferences.length > 0}
             recordCount={studentPreferences.length}
           />
           <FileUpload
             label="Teacher Restrictions"
-            description="CSV with students who should not be paired together"
+            description="CSV with Student,Forbidden Partner columns"
             onFileLoad={handleTeacherRestrictionsLoad}
             isLoaded={teacherRestrictions.length > 0}
             recordCount={teacherRestrictions.length}
