@@ -6,6 +6,7 @@ import { StatsCard } from '@/components/StatsCard';
 import { ResultsTable } from '@/components/ResultsTable';
 import { ClassesDisplay } from '@/components/ClassesDisplay';
 import { SampleDownloads } from '@/components/SampleDownloads';
+import { ExportResults } from '@/components/ExportResults';
 import { parseStudentPreferences, parseTeacherRestrictions, getAllStudents } from '@/utils/csvParser';
 import { sortStudents } from '@/utils/sortingAlgorithm';
 import { StudentPreference, TeacherRestriction, PrecedenceMode, SortingResult } from '@/types/student';
@@ -161,6 +162,9 @@ const Index = () => {
                 variant={result.stats.overallScore >= 70 ? 'success' : result.stats.overallScore >= 50 ? 'warning' : 'destructive'}
               />
             </div>
+
+            {/* Export Options */}
+            <ExportResults result={result} />
 
             {/* Class Assignments */}
             <ClassesDisplay classes={result.classes} />
