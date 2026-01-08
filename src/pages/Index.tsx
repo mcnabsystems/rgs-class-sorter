@@ -67,7 +67,7 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <img src={rgsLogo} alt="Ripon Grammar School Logo" className="h-12" />
             <div>
-              <h1 className="text-2xl font-bold text-foreground">RGS Year 9 Class Sorter</h1>
+              <h1 className="text-2xl font-bold text-foreground">RGS Class Sorter</h1>
               <p className="text-sm text-muted-foreground">
                 Intelligently sort students into classes based on preferences and restrictions
               </p>
