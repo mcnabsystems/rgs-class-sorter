@@ -13,12 +13,15 @@ import { StudentPreference, TeacherRestriction, PrecedenceMode, SortingResult } 
 import { Users, Trophy, AlertCircle, XCircle, Shuffle, RotateCcw } from 'lucide-react';
 import rgsLogo from '@/assets/rgs-logo.gif';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const Index = () => {
   const [studentPreferences, setStudentPreferences] = useState<StudentPreference[]>([]);
   const [teacherRestrictions, setTeacherRestrictions] = useState<TeacherRestriction[]>([]);
   const [precedence, setPrecedence] = useState<PrecedenceMode>('student');
   const [prioritizedStudents, setPrioritizedStudents] = useState<string[]>([]);
+  const [numClasses, setNumClasses] = useState<number>(2);
   const [result, setResult] = useState<SortingResult | null>(null);
 
   const allStudents = useMemo(() => {
@@ -44,7 +47,8 @@ const Index = () => {
       studentPreferences,
       teacherRestrictions,
       precedence,
-      prioritizedStudents
+      prioritizedStudents,
+      numClasses
     );
     setResult(sortingResult);
   };
@@ -54,6 +58,7 @@ const Index = () => {
     setTeacherRestrictions([]);
     setPrecedence('student');
     setPrioritizedStudents([]);
+    setNumClasses(2);
     setResult(null);
   };
 
@@ -101,6 +106,24 @@ const Index = () => {
         {/* Controls Section */}
         {canSort && (
           <section className="bg-card rounded-xl border border-border p-6 space-y-6 animate-fade-in">
+            <div className="space-y-2">
+              <Label htmlFor="numClasses" className="text-sm font-medium">
+                Number of Classes
+              </Label>
+              <Input
+                id="numClasses"
+                type="number"
+                min={2}
+                max={20}
+                value={numClasses}
+                onChange={(e) => setNumClasses(Math.max(2, Math.min(20, parseInt(e.target.value) || 2)))}
+                className="w-32"
+              />
+              <p className="text-xs text-muted-foreground">
+                How many classes to distribute students into (2-20)
+              </p>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <PrecedenceToggle value={precedence} onChange={setPrecedence} />
               <StudentSelector
