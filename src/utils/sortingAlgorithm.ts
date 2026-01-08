@@ -148,7 +148,14 @@ function distributeIntoClasses(
   }));
   
   const assigned = new Set<string>();
-  const targetSize = Math.ceil(students.length / numClasses);
+  const totalStudents = students.length;
+  const baseSize = Math.floor(totalStudents / numClasses);
+  const remainder = totalStudents % numClasses;
+  
+  // Calculate target size for each class (some get baseSize+1, others get baseSize)
+  const getTargetSize = (classIndex: number): number => {
+    return classIndex < remainder ? baseSize + 1 : baseSize;
+  };
   
   // Helper to check if student can be placed in a class
   const canPlaceInClass = (student: string, cls: ClassGroup): boolean => {
@@ -164,17 +171,35 @@ function distributeIntoClasses(
     return true;
   };
   
+  // Helper to find the smallest class that can fit students
+  const findSmallestClass = (count: number, student: string, partner?: string): ClassGroup | null => {
+    let bestClass: ClassGroup | null = null;
+    let minSize = Infinity;
+    
+    for (let i = 0; i < classes.length; i++) {
+      const cls = classes[i];
+      const targetSize = getTargetSize(i);
+      
+      if (cls.students.length + count > targetSize) continue;
+      if (!canPlaceInClass(student, cls)) continue;
+      if (partner && !canPlaceInClass(partner, cls)) continue;
+      
+      if (cls.students.length < minSize) {
+        minSize = cls.students.length;
+        bestClass = cls;
+      }
+    }
+    
+    return bestClass;
+  };
+  
   // First, place paired students together
   const processedPairs = new Set<string>();
   pairs.forEach((partner, student) => {
     if (processedPairs.has(student) || processedPairs.has(partner)) return;
     
-    // Find a class that can fit both and respects restrictions
-    const availableClass = classes.find(c => 
-      c.students.length + 2 <= targetSize + 1 &&
-      canPlaceInClass(student, c) &&
-      canPlaceInClass(partner, c)
-    );
+    // Find the smallest class that can fit both
+    const availableClass = findSmallestClass(2, student, partner);
     
     if (availableClass) {
       availableClass.students.push(student, partner);
@@ -185,16 +210,21 @@ function distributeIntoClasses(
     }
   });
   
-  // Then distribute remaining students
+  // Then distribute remaining students to balance class sizes
   const remaining = students.filter(s => !assigned.has(s));
   
   for (const student of remaining) {
-    // Find the best class for this student
+    // Find the smallest class that respects restrictions
     let bestClass: ClassGroup | null = null;
+    let minSize = Infinity;
     let minRestrictions = Infinity;
     
-    for (const cls of classes) {
-      if (cls.students.length >= targetSize + 1) continue;
+    for (let i = 0; i < classes.length; i++) {
+      const cls = classes[i];
+      const targetSize = getTargetSize(i);
+      
+      // Skip if class is at or above target
+      if (cls.students.length >= targetSize) continue;
       
       // In teacher precedence mode, only consider classes with no restrictions
       if (precedence === 'teacher' && !canPlaceInClass(student, cls)) {
@@ -209,15 +239,32 @@ function distributeIntoClasses(
         }
       }
       
-      if (restrictionCount < minRestrictions) {
+      // Prefer smaller classes, then fewer restrictions
+      if (cls.students.length < minSize || 
+          (cls.students.length === minSize && restrictionCount < minRestrictions)) {
+        minSize = cls.students.length;
         minRestrictions = restrictionCount;
         bestClass = cls;
       }
     }
     
-    // If no suitable class found (only in edge cases), find any class with space
+    // If no class under target, find any class with minimum size
     if (!bestClass) {
-      bestClass = classes.find(c => c.students.length < targetSize + 2) || classes[0];
+      for (const cls of classes) {
+        if (precedence === 'teacher' && !canPlaceInClass(student, cls)) {
+          continue;
+        }
+        if (bestClass === null || cls.students.length < bestClass.students.length) {
+          bestClass = cls;
+        }
+      }
+    }
+    
+    // Last resort: just pick the smallest class
+    if (!bestClass) {
+      bestClass = classes.reduce((min, cls) => 
+        cls.students.length < min.students.length ? cls : min
+      );
     }
     
     bestClass.students.push(student);
